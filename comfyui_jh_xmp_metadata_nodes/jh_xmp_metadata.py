@@ -296,9 +296,10 @@ class JHXMPMetadata:
 
         try:
             root = etree.fromstring(xml_string)
-        except etree.XMLSyntaxError as e:
-            raise ValueError("Invalid XML") from e
-            # return instance
+        except etree.XMLSyntaxError:
+            # raise ValueError("Invalid XML") from e
+            # In case of invalid XML, return an empty instance
+            return instance
 
         creator_list: list[str] = list()
         dc_creator_element = root.xpath(

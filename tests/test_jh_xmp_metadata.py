@@ -162,8 +162,14 @@ def test_from_string_with_garbage_data():
         </rdf:RDF>
     </x:xmpmeta>
     """
-    with pytest.raises(ValueError):
-        JHXMPMetadata.from_string(garbage_data)
+    parsed_metadata = JHXMPMetadata.from_string(garbage_data)
+    assert parsed_metadata.title is None
+    assert parsed_metadata.creator is None
+    assert parsed_metadata.description is None
+    assert parsed_metadata.subject is None
+    assert parsed_metadata.instructions is None
+    assert parsed_metadata.comment is None
+    assert parsed_metadata.alt_text is None
 
 
 def test_from_string_with_missing_fields():
@@ -201,8 +207,14 @@ def test_large_metadata_values():
 
 def test_empty_xml_string():
     empty_xml = ""
-    with pytest.raises(ValueError):
-        JHXMPMetadata.from_string(empty_xml)
+    parsed_metadata = JHXMPMetadata.from_string(empty_xml)
+    assert parsed_metadata.title is None
+    assert parsed_metadata.creator is None
+    assert parsed_metadata.description is None
+    assert parsed_metadata.subject is None
+    assert parsed_metadata.instructions is None
+    assert parsed_metadata.comment is None
+    assert parsed_metadata.alt_text is None
 
 
 def test_special_characters_in_xml(
