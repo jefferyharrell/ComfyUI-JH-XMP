@@ -19,7 +19,8 @@ def valid_xml_string() -> str:
             <rdf:Description rdf:about=""
                 xmlns:dc="http://purl.org/dc/elements/1.1/"
                 xmlns:photoshop="http://ns.adobe.com/photoshop/1.0/"
-                xmlns:exif="http://ns.adobe.com/exif/1.0/">
+                xmlns:exif="http://ns.adobe.com/exif/1.0/"
+                xmlns:Iptc4xmpCore="http://iptc.org/std/Iptc4xmpCore/1.0/xmlns/">
                 <dc:creator>
                     <rdf:Seq>
                         <rdf:li>Test Creator</rdf:li>
@@ -46,6 +47,7 @@ def valid_xml_string() -> str:
                         <rdf:li xml:lang="x-default">Test Comment</rdf:li>
                     </rdf:Alt>
                 </exif:UserComment>
+                <Iptc4xmpCore:AltTextAccessibility>Test Alt Text</Iptc4xmpCore:AltTextAccessibility>
             </rdf:Description>
         </rdf:RDF>
     </x:xmpmeta>
@@ -244,7 +246,8 @@ def test_load_image_with_valid_metadata(
         assert output[5] == "Test Subject"  # subject
         assert output[6] == "Test Instructions"  # instructions
         assert output[7] == "Test Comment"  # xml_string
-        assert output[8] == valid_xml_string  # xml_string
+        assert output[8] == "Test Alt Text"  # alt_text
+        assert output[9] == valid_xml_string  # xml_string
 
 
 def test_load_image_with_invalid_metadata(
@@ -266,7 +269,8 @@ def test_load_image_with_invalid_metadata(
         assert output[5] is None  # subject
         assert output[6] is None  # instructions
         assert output[7] is None  # comment
-        assert output[8] == invalid_xml_string  # xml_string
+        assert output[8] is None  # alt_text
+        assert output[-1] == invalid_xml_string  # xml_string
 
 
 def test_load_image_with_garbage_metadata(
@@ -288,7 +292,8 @@ def test_load_image_with_garbage_metadata(
         assert output[5] is None  # subject
         assert output[6] is None  # instructions
         assert output[7] is None  # comment
-        assert output[8] == garbage_xml_string  # xml_string
+        assert output[8] is None  # alt_text
+        assert output[-1] == garbage_xml_string  # xml_string
 
 
 def test_load_image_with_multiframe_image_file(
@@ -311,7 +316,8 @@ def test_load_image_with_multiframe_image_file(
         assert output[5] is None  # subject
         assert output[6] is None  # instructions
         assert output[7] is None  # comment
-        assert output[8] == ""  # xml_string
+        assert output[8] is None  # alt text
+        assert output[-1] == ""  # xml_string
 
 
 def test_load_image_with_invalid_multiframe_image_file(
@@ -334,7 +340,8 @@ def test_load_image_with_invalid_multiframe_image_file(
         assert output[5] is None  # subject
         assert output[6] is None  # instructions
         assert output[7] is None  # comment
-        assert output[8] == ""  # xml_string
+        assert output[8] is None  # alt text
+        assert output[-1] == ""  # xml_string
 
 
 def test_load_32_bit_integer_image(sample_32_bit_integer_image_file: Path) -> None:
@@ -355,7 +362,8 @@ def test_load_32_bit_integer_image(sample_32_bit_integer_image_file: Path) -> No
         assert output[5] is None  # subject
         assert output[6] is None  # instructions
         assert output[7] is None  # comment
-        assert output[8] == ""  # xml_string
+        assert output[8] is None  # alt text
+        assert output[-1] == ""  # xml_string
 
         # Verify RGB channel consistency
         rgb_values = output[0][0, :, :, :]
@@ -385,7 +393,8 @@ def test_load_grayscale_image(sample_grayscale_image_file: Path) -> None:
         assert output[5] is None  # subject
         assert output[6] is None  # instructions
         assert output[7] is None  # comment
-        assert output[8] == ""  # xml_string
+        assert output[8] is None  # alt text
+        assert output[-1] == ""  # xml_string
 
         # Verify that the image tensor is in RGB format
         assert output[0].shape[-1] == 3  # Last dimension should be 3 for RGB

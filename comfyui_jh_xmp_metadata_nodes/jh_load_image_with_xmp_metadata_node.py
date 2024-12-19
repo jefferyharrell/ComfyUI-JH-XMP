@@ -39,6 +39,7 @@ class JHLoadImageWithXMPMetadataNode:
         "STRING",
         "STRING",
         "STRING",
+        "STRING",
     )
     RETURN_NAMES = (
         "IMAGE",
@@ -49,6 +50,7 @@ class JHLoadImageWithXMPMetadataNode:
         "subject",
         "instructions",
         "comment",
+        "alt_text",
         "xml_string",
     )
     FUNCTION = "load_image"
@@ -60,6 +62,7 @@ class JHLoadImageWithXMPMetadataNode:
     ) -> tuple[
         torch.Tensor,
         torch.Tensor,
+        str | None,
         str | None,
         str | None,
         str | None,
@@ -100,12 +103,7 @@ class JHLoadImageWithXMPMetadataNode:
                 if isinstance(xmp_data, bytes):
                     xml_string = xmp_data.decode("utf-8")
                 if xml_string:  # Can't parse None or an empty string
-                    try:
-                        xmp_metadata = JHXMPMetadata.from_string(xml_string)
-                    except ValueError:
-                        # If the XMP metadata is invalid, we'll just ignore it
-                        # and continue processing the image.
-                        pass
+                    xmp_metadata = JHXMPMetadata.from_string(xml_string)
 
             # Skip frames with different sizes than the first frame
             # (This is pretty much the unlikeliest of all edge cases)
@@ -136,6 +134,7 @@ class JHLoadImageWithXMPMetadataNode:
             xmp_metadata.subject,
             xmp_metadata.instructions,
             xmp_metadata.comment,
+            xmp_metadata.alt_text,
             xml_string,
         )
 
